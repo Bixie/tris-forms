@@ -27,7 +27,6 @@
     function setProcessing() {
         submitButton.innerText = 'Bezig met verzenden...';
         submitButton.setAttribute('disabled', 'disabled');
-
     }
 
     function resetProcessing() {

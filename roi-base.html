@@ -24,7 +24,7 @@
 <!-- include only for dev -->
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 <!-- Include in page calculator, uncomment vue prod script -->
-<script src="https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.js"></script>
+<!--<script src="https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.js"></script>--> <!-- disable mail function -->
 <!--<script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>-->
 
 <!-- all html below needs to be in calculator article. Make sure src of script tags at bottom are valid! -->
@@ -524,34 +524,34 @@
         </tbody>
     </table>
 
-    <form id="mail-results" class="uk-margin-large uk-card uk-card-default uk-card-body uk-padding-small">
-        <strong>Vul hier uw naam en e-mailadres in om het resultaat als e-mail te versturen</strong>
-        <div
-            class="
-              uk-flex uk-flex-middle uk-flex-wrap
-            "
-        >
-            <input
-                type="text"
-                name="name"
-                placeholder="Uw naam"
-                class="uk-form-width-medium uk-input uk-margin-right"
-                required
-            />
-            <input
-                type="email"
-                name="email"
-                placeholder="Vul uw e-mailadres in"
-                class="uk-flex-1 uk-input uk-margin-right"
-                required
-            />
-            <button type="submit" class="uk-button uk-button-primary sendform">
-                Resultaat als e-mail verzenden
-            </button>
-        </div>
-        <div class="mail-success uk-alert uk-alert-success uk-hidden"></div>
-        <div class="mail-error uk-alert uk-alert-danger uk-hidden"></div>
-    </form>
+<!--    <form id="mail-results" class="uk-margin-large uk-card uk-card-default uk-card-body uk-padding-small">-->
+<!--        <strong>Vul hier uw naam en e-mailadres in om het resultaat als e-mail te versturen</strong>-->
+<!--        <div-->
+<!--            class="-->
+<!--              uk-flex uk-flex-middle uk-flex-wrap-->
+<!--            "-->
+<!--        >-->
+<!--            <input-->
+<!--                type="text"-->
+<!--                name="name"-->
+<!--                placeholder="Uw naam"-->
+<!--                class="uk-form-width-medium uk-input uk-margin-right"-->
+<!--                required-->
+<!--            />-->
+<!--            <input-->
+<!--                type="email"-->
+<!--                name="email"-->
+<!--                placeholder="Vul uw e-mailadres in"-->
+<!--                class="uk-flex-1 uk-input uk-margin-right"-->
+<!--                required-->
+<!--            />-->
+<!--            <button type="submit" class="uk-button uk-button-primary sendform">-->
+<!--                Resultaat als e-mail verzenden-->
+<!--            </button>-->
+<!--        </div>-->
+<!--        <div class="mail-success uk-alert uk-alert-success uk-hidden"></div>-->
+<!--        <div class="mail-error uk-alert uk-alert-danger uk-hidden"></div>-->
+<!--    </form>-->
 
     <blockquote class="uk-margin-large-top">
         Laat de besparingscalculator geen duidelijk financieel voordeel zien? Neem dan direct
@@ -574,7 +574,7 @@
     </p>
 </div>
 <script src="./roi/roi.js" type="text/javascript"></script>
-<script src="./roi/mail-result.js" type="text/javascript"></script>
+<!--<script src="./roi/mail-result.js" type="text/javascript"></script>--> <!-- disable mail function -->
 <!--end of calculator dom-->
 </body>
 </html>

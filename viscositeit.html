@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Viscositeit Calculator DOM</title>
+    <!-- UIkit -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/css/uikit.min.css"
+    />
+    <script
+        src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit.min.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
+</head>
+<body>
+<style>
+    .visc-calc .table-header{
+        background: #55a6f7;
+        color: #000;
+    }
+    .visc-calc .table-footer{
+        background: #a8c3de;
+        color: #000;
+    }
+</style>
+<div id="visc-calc" class="visc-calc">
+    <table class="uk-table uk-table-divider">
+        <tbody>
+        <tr>
+            <td colspan="3" class="uk-text-bold">
+                Viscositeitscalculator met een specifieke temperatuur (ASTM D341)
+            </td>
+        </tr>
+        <tr class="table-header">
+            <td class="uk-table-shrink">
+                Vul hieronder de temperatuur en viscositeit in die je kent. Deze vind je over het algemeen terug in de documentatie van je olie
+            </td>
+            <td class="uk-table-middle uk-text-bold">Temperatuur Celsius</td>
+            <td class="uk-table-middle uk-text-bold">Viscositeit cSt</td>
+        </tr>
+        <tr>
+            <td>Temperatuur en viscositeit 1</td>
+            <td>
+                <input type="text" name="a-temp" value="40.00"
+                       class="uk-input" />
+            </td>
+            <td>
+                <input type="text" name="a-visc" value="68.00"
+                       class="uk-input" />
+            </td>
+        </tr>
+        <tr>
+            <td>Temperatuur en viscositeit 2</td>
+            <td>
+                <input type="text" name="b-temp" value="100.00"
+                       class="uk-input" />
+            </td>
+            <td>
+                <input type="text" name="b-visc" value="8.60"
+                       class="uk-input" />
+            </td>
+        </tr>
+        <tr>
+            <td>Vul hier de bedrijfstemperatuur in</td>
+            <td>
+                <input type="text" name="target-temp" value="60.00"
+                       class="uk-input" />
+            </td>
+            <td>℃</td>
+        </tr>
+        <tr class="table-footer">
+            <td class="uk-text-nowrap">De viscositeit met bedrijfstemperatuur:</td>
+            <td>
+                <strong data-result>0</strong>
+            </td>
+            <td class="uk-table-middle uk-text-bold">
+                cSt
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <p>
+        <button type="button" name="calculate"
+                class="uk-button uk-button-primary">
+            Berekenen
+        </button>
+    </p>
+</div>
+<script>
+    (function() {
+        const visCalc = document.getElementById('visc-calc');
+        const resultEl = visCalc.querySelector('[data-result]');
+        const calcButton = visCalc.querySelector('[name=calculate]');
+        const inputs = {
+            aTemp: visCalc.querySelector('[name=a-temp]'),
+            aVisc: visCalc.querySelector('[name=a-visc]'),
+            bTemp: visCalc.querySelector('[name=b-temp]'),
+            bVisc: visCalc.querySelector('[name=b-visc]'),
+            targetTemp: visCalc.querySelector('[name=target-temp]'),
+        };
+
+        calcButton.addEventListener('click', calcListener);
+        Object.values(inputs)
+            .forEach(el => el.addEventListener('blur', calcListener));
+
+        function calcListener() {
+            const result = calculate(validatedInputValues());
+            resultEl.textContent = displayFloat(result);
+        }
+
+        function validatedInputValues() {
+            const data = {};
+            Object.entries(inputs)
+                .forEach(([key, el]) => {
+                    data[key] = getValidFloat(el.value);
+                    el.value = displayFloat(data[key]);
+                });
+            return data;
+        }
+
+        function calculate(data) {
+            const {
+                aTemp,
+                aVisc,
+                bTemp,
+                bVisc,
+                targetTemp,
+            } = data;
+            const aTempLog = log10(aTemp + 273);
+            const bTempLog = log10(bTemp + 273);
+            const aViscLog = log10(log10(aVisc + 0.7));
+            const bViscLog = log10(log10(bVisc + 0.7));
+            const targetTempLog = log10(targetTemp + 273);
+            const tempDiff = aTempLog - bTempLog;
+            const viscRel = (bViscLog - aViscLog) / tempDiff;
+            const aLogPoint = aViscLog + (viscRel * aTempLog);
+            const targetLogPoint = aLogPoint - (viscRel * targetTempLog);
+            const targetPowPoint = Math.pow(10, Math.pow(10, targetLogPoint));
+            return targetPowPoint - 0.7;
+        }
+
+        function getValidFloat(str) {
+            str = String(str).replace(/,/g, '.');
+            const res = parseFloat(str);
+            return isNaN(res) ? 0 : res;
+        }
+
+        function displayFloat(n, nrDecimals = 2) {
+            if (checkIsNaN(n)) {
+                return Number.NaN;
+            } else {
+                const res = round(n, nrDecimals);
+                if (nrDecimals > 0) {
+                    const str = String(res);
+                    if (!str.includes('.') || str.includes('E') || str.includes('e')) {
+                        return str;
+                    }
+                    const [main, decimals] = str.split('.');
+                    return `${main}.${decimals.padEnd(2, '0')}`;
+                } else {
+                    return res;
+                }
+            }
+        }
+
+        function checkIsNaN(x) {
+            return (isNaN(x) || (typeof x == 'number' && !isFinite(x)));
+        }
+
+        function log10(x) {
+            return Math.log(x) / Math.LN10;
+        }
+
+        function round(n, nrDecimals) {
+            if (isFinite(n) && isFinite(nrDecimals)) {
+                const sign_n = (n < 0) ? -1 : 1;
+                const abs_n = Math.abs(n);
+                const factor = Math.pow(10, nrDecimals);
+                return sign_n * Math.round(abs_n * factor) / factor;
+            } else {
+                return Number.NaN;
+            }
+        }
+    })();
+</script>
+</body>
+</html>
